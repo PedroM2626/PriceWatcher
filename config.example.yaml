@@ -1,0 +1,36 @@
+# Database configuration
+database:
+  host: localhost
+  port: 5432
+  user: postgres
+  password: yourpassword
+  dbname: pricewatcher
+  sslmode: disable
+
+# Scraper configuration
+scraper:
+  user_agent: "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36"
+  request_delay: 5s  # Delay between requests to avoid being blocked
+  request_timeout: 30s  # Timeout for HTTP requests
+  workers: 3  # Number of concurrent workers
+
+# Notifier configuration
+notifier:
+  email:
+    enabled: false
+    smtp_host: smtp.example.com
+    smtp_port: 587
+    username: your-email@example.com
+    password: your-email-password
+    from: pricewatcher@yourdomain.com
+  
+  telegram:
+    enabled: false
+    token: "your-telegram-bot-token"
+    chat_id: 123456789  # Your Telegram chat ID
+
+# Web server configuration
+server:
+  port: 8080
+  read_timeout: 10s
+  write_timeout: 10s

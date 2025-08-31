@@ -1,0 +1,53 @@
+version: '3.8'
+
+services:
+  app:
+    build: .
+    container_name: pricewatcher
+    restart: unless-stopped
+    ports:
+      - "8080:8080"
+    environment:
+      - TZ=America/Sao_Paulo
+    volumes:
+      - ./config.yaml:/app/config.yaml
+    depends_on:
+      - db
+    networks:
+      - pricewatcher-network
+
+  db:
+    image: postgres:15-alpine
+    container_name: pricewatcher-db
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: yoursecurepassword
+      POSTGRES_DB: pricewatcher
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    ports:
+      - "5432:5432"
+    networks:
+      - pricewatcher-network
+
+  pgadmin:
+    image: dpage/pgadmin4:latest
+    container_name: pgadmin
+    restart: unless-stopped
+    environment:
+      PGADMIN_DEFAULT_EMAIL: admin@example.com
+      PGADMIN_DEFAULT_PASSWORD: admin
+    ports:
+      - "5050:80"
+    depends_on:
+      - db
+    networks:
+      - pricewatcher-network
+
+networks:
+  pricewatcher-network:
+    driver: bridge
+
+volumes:
+  postgres_data:
