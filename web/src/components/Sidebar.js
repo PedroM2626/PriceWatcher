@@ -20,7 +20,7 @@ const StyledDrawer = styled(Drawer)(({ theme }) => ({
   },
 }));
 
-const Sidebar = ({ mobileOpen, onClose }) => {
+const Sidebar = ({ isOpen, onClose }) => {
   const navigate = useNavigate();
   const location = useLocation();
 
@@ -33,7 +33,7 @@ const Sidebar = ({ mobileOpen, onClose }) => {
 
   const handleItemClick = (path) => {
     navigate(path);
-    if (mobileOpen) {
+    if (isOpen) {
       onClose();
     }
   };
@@ -46,7 +46,7 @@ const Sidebar = ({ mobileOpen, onClose }) => {
     <>
       <StyledDrawer
         variant="temporary"
-        open={mobileOpen}
+        open={isOpen}
         onClose={onClose}
         ModalProps={{
           keepMounted: true, // Better open performance on mobile
