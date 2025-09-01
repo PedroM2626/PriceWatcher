@@ -80,5 +80,13 @@ func LoadConfig(filename string) (*Config, error) {
 		return nil, fmt.Errorf("failed to parse config file: %w", err)
 	}
 
+	// Fallbacks from environment for secret-free config
+	if cfg.Database.DSN == "" {
+		if dsn := os.Getenv("DATABASE_URL"); dsn != "" {
+			cfg.Database.DSN = dsn
+			if cfg.Database.Driver == "" { cfg.Database.Driver = "postgres" }
+		}
+	}
+
 	return &cfg, nil
 }
