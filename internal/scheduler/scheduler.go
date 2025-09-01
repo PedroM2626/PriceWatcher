@@ -6,6 +6,7 @@ import (
 
 	"github.com/go-co-op/gocron/v2"
 	"github.com/rs/zerolog/log"
+	"github.com/PedroM2626/PriceWatcher/internal/models"
 	"github.com/PedroM2626/PriceWatcher/internal/scraper"
 	"github.com/PedroM2626/PriceWatcher/internal/storage"
 )
