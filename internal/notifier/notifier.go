@@ -4,6 +4,7 @@ import (
 	"context"
 	"fmt"
 	"html/template"
+	"strings"
 	"time"
 
 	"github.com/PedroM2626/PriceWatcher/internal/models"
