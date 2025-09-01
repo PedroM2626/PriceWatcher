@@ -1,7 +1,7 @@
 import { useState, useEffect, useCallback } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { authAPI } from '../services/api';
-import { getToken, setToken, removeToken, getUserFromToken } from '../utils/auth';
+import { getAuthToken, setAuthToken, removeAuthToken, getUserFromToken } from '../utils/auth';
 
 export function useAuth() {
   const [user, setUser] = useState(null);
@@ -12,7 +12,7 @@ export function useAuth() {
 
   // Check if user is authenticated
   const isAuthenticated = useCallback(() => {
-    const token = getToken();
+    const token = getAuthToken();
     if (!token) return false;
     
     // Additional checks could be added here, like token expiration
@@ -25,11 +25,11 @@ export function useAuth() {
       setLoading(true);
       setError(null);
       
-      const response = await authAPI.login({ email, password });
+      const response = await authAPI.login(email, password);
       const { token, user: userData } = response.data;
-      
+
       // Store token and update state
-      setToken(token);
+      setAuthToken(token);
       setUser(userData);
       
       // Redirect to the originally requested page or home
@@ -48,7 +48,7 @@ export function useAuth() {
 
   // Logout function
   const logout = useCallback(() => {
-    removeToken();
+    removeAuthToken();
     setUser(null);
     navigate('/login');
   }, [navigate]);
@@ -57,7 +57,7 @@ export function useAuth() {
   useEffect(() => {
     const checkAuth = async () => {
       try {
-        const token = getToken();
+        const token = getAuthToken();
         if (token) {
           // If token exists, get user data
           const userData = getUserFromToken(token);
@@ -65,12 +65,12 @@ export function useAuth() {
             setUser(userData);
           } else {
             // If token is invalid, clear it
-            removeToken();
+            removeAuthToken();
           }
         }
       } catch (err) {
         console.error('Auth check failed:', err);
-        removeToken();
+        removeAuthToken();
       } finally {
         setLoading(false);
       }
