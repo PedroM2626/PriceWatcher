@@ -202,11 +202,10 @@ const Login = () => {
           </Box>
         </Paper>
       </Box>
-        <Box sx={{ mt: 3, textAlign: 'center' }}>
-          <Typography variant="caption" color="textSecondary">
-            {new Date().getFullYear()} PriceWatcher. All rights reserved.
-          </Typography>
-        </Box>
+      <Box sx={{ mt: 3, textAlign: 'center' }}>
+        <Typography variant="caption" color="textSecondary">
+          {new Date().getFullYear()} PriceWatcher. All rights reserved.
+        </Typography>
       </Box>
     </Container>
   );
