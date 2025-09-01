@@ -50,15 +50,10 @@ const Loader = () => (
 );
 
 function App() {
-  const [mobileOpen, setMobileOpen] = React.useState(false);
   const [isSidebarOpen, setIsSidebarOpen] = React.useState(true);
-  
+
   const toggleSidebar = () => {
     setIsSidebarOpen(!isSidebarOpen);
-  };
-
-  const handleDrawerToggle = () => {
-    setMobileOpen(!mobileOpen);
   };
 
   const mainContentStyle = {
