@@ -1,7 +1,6 @@
 import { useState, useEffect, useCallback } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
-import { authAPI } from '../services/api';
-import { getToken, setToken, removeToken, getUserFromToken } from '../utils/auth';
+import { supabase } from '../services/supabase';
 
 export function useAuth() {
   const [user, setUser] = useState(null);
@@ -10,83 +9,51 @@ export function useAuth() {
   const navigate = useNavigate();
   const location = useLocation();
 
-  // Check if user is authenticated
-  const isAuthenticated = useCallback(() => {
-    const token = getToken();
-    if (!token) return false;
-    
-    // Additional checks could be added here, like token expiration
-    return true;
-  }, []);
+  const isAuthenticated = useCallback(() => Boolean(user), [user]);
 
-  // Login function
   const login = async (email, password) => {
     try {
       setLoading(true);
       setError(null);
-      
-      const response = await authAPI.login({ email, password });
-      const { token, user: userData } = response.data;
-      
-      // Store token and update state
-      setToken(token);
-      setUser(userData);
-      
-      // Redirect to the originally requested page or home
+      const { data, error: err } = await supabase.auth.signInWithPassword({ email, password });
+      if (err) throw err;
+      setUser(data.user || null);
       const from = location.state?.from?.pathname || '/';
       navigate(from, { replace: true });
-      
       return { success: true };
     } catch (err) {
-      const errorMessage = err.response?.data?.message || 'Login failed';
-      setError(errorMessage);
-      return { success: false, error: errorMessage };
+      const msg = err.message || 'Login failed';
+      setError(msg);
+      return { success: false, error: msg };
     } finally {
       setLoading(false);
     }
   };
 
-  // Logout function
-  const logout = useCallback(() => {
-    removeToken();
+  const logout = useCallback(async () => {
+    await supabase.auth.signOut();
     setUser(null);
     navigate('/login');
   }, [navigate]);
 
-  // Check auth status on mount
   useEffect(() => {
-    const checkAuth = async () => {
+    let mounted = true;
+    const init = async () => {
       try {
-        const token = getToken();
-        if (token) {
-          // If token exists, get user data
-          const userData = getUserFromToken(token);
-          if (userData) {
-            setUser(userData);
-          } else {
-            // If token is invalid, clear it
-            removeToken();
-          }
-        }
-      } catch (err) {
-        console.error('Auth check failed:', err);
-        removeToken();
+        const { data } = await supabase.auth.getSession();
+        if (mounted) setUser(data.session?.user || null);
       } finally {
-        setLoading(false);
+        if (mounted) setLoading(false);
       }
     };
-
-    checkAuth();
+    init();
+    const { data: sub } = supabase.auth.onAuthStateChange((_event, session) => {
+      setUser(session?.user || null);
+    });
+    return () => { sub.subscription.unsubscribe(); mounted = false; };
   }, []);
 
-  return {
-    user,
-    loading,
-    error,
-    isAuthenticated,
-    login,
-    logout,
-  };
+  return { user, loading, error, isAuthenticated, login, logout };
 }
 
 export default useAuth;

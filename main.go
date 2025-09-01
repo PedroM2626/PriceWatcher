@@ -49,12 +49,17 @@ func main() {
 	}()
 
 	// Initialize scraper
-	scraper := scraper.NewScraper(db, cfg.Scraper)
+	ps := scraper.NewScraper(db, scraper.ScraperConfig{
+		UserAgent:      cfg.Scraper.UserAgent,
+		RequestDelay:   cfg.Scraper.RequestDelay,
+		RequestTimeout: cfg.Scraper.RequestTimeout,
+		Workers:        cfg.Scraper.Workers,
+	})
 
 	// Start scraping in a separate goroutine
 	go func() {
 		log.Println("Starting price scraper...")
-		if err := scraper.Run(); err != nil {
+		if err := ps.Run(); err != nil {
 			log.Fatalf("Scraper error: %v", err)
 		}
 	}()

@@ -16,6 +16,7 @@ const Products = lazy(() => import('./pages/Products'));
 const Alerts = lazy(() => import('./pages/Alerts'));
 const Settings = lazy(() => import('./pages/Settings'));
 const Login = lazy(() => import('./pages/Login'));
+const Register = lazy(() => import('./pages/Register'));
 
 // Create a theme instance
 const theme = createTheme({
@@ -50,15 +51,10 @@ const Loader = () => (
 );
 
 function App() {
-  const [mobileOpen, setMobileOpen] = React.useState(false);
   const [isSidebarOpen, setIsSidebarOpen] = React.useState(true);
-  
+
   const toggleSidebar = () => {
     setIsSidebarOpen(!isSidebarOpen);
-  };
-
-  const handleDrawerToggle = () => {
-    setMobileOpen(!mobileOpen);
   };
 
   const mainContentStyle = {
@@ -87,6 +83,7 @@ function App() {
               <Routes>
                 {/* Public routes */}
                 <Route path="/login" element={<Login />} />
+                <Route path="/register" element={<Register />} />
                 
                 {/* Protected routes */}
                 <Route
