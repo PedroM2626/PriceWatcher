@@ -1,0 +1,43 @@
+database:
+  driver: sqlite3
+  dsn: ./pricewatcher.db  # SQLite database file
+  
+  # PostgreSQL configuration (for production)
+  # host: localhost
+  # port: 5432
+  # user: postgres
+  # password: postgres
+  # dbname: pricewatcher
+  # sslmode: disable
+
+server:
+  port: 8080
+  environment: development
+  allowed_origins:
+    - "http://localhost:3000"
+    - "http://localhost:8080"
+
+scraper:
+  user_agent: "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36"
+  request_delay: 2s
+  timeout: 30s
+  max_retries: 3
+  retry_delay: 5s
+
+notifier:
+  email:
+    enabled: false
+    smtp_host: "smtp.example.com"
+    smtp_port: 587
+    smtp_username: "your-email@example.com"
+    smtp_password: "your-email-password"
+    from: "noreply@pricewatcher.com"
+  telegram:
+    enabled: false
+    bot_token: "your-telegram-bot-token"
+    chat_id: "your-telegram-chat-id"
+
+logging:
+  level: "debug"
+  format: "text"
+  file: "logs/pricewatcher.log"

@@ -1,0 +1,255 @@
+import React, { useState } from 'react';
+import { Link as RouterLink, useNavigate } from 'react-router-dom';
+import { 
+  AppBar, 
+  Toolbar, 
+  IconButton, 
+  Typography, 
+  InputBase, 
+  Badge, 
+  Box, 
+  Avatar, 
+  Menu, 
+  MenuItem, 
+  Tooltip,
+  Divider,
+  ListItemIcon,
+  ListItemText,
+  Button
+} from '@mui/material';
+import { 
+  Menu as MenuIcon, 
+  Search as SearchIcon,
+  Notifications as NotificationsIcon,
+  Logout,
+  Settings as SettingsIcon,
+  Dashboard as DashboardIcon,
+  ShoppingCart as ProductsIcon,
+  NotificationsActive as AlertsIcon,
+} from '@mui/icons-material';
+import { styled, alpha } from '@mui/material/styles';
+import { useAuth } from '../hooks/useAuth';
+
+const Search = styled('div')(({ theme }) => ({
+  position: 'relative',
+  borderRadius: theme.shape.borderRadius,
+  backgroundColor: alpha(theme.palette.common.white, 0.15),
+  '&:hover': {
+    backgroundColor: alpha(theme.palette.common.white, 0.25),
+  },
+  marginRight: theme.spacing(2),
+  marginLeft: 0,
+  width: '100%',
+  [theme.breakpoints.up('sm')]: {
+    marginLeft: theme.spacing(3),
+    width: 'auto',
+  },
+}));
+
+const SearchIconWrapper = styled('div')(({ theme }) => ({
+  padding: theme.spacing(0, 2),
+  height: '100%',
+  position: 'absolute',
+  pointerEvents: 'none',
+  display: 'flex',
+  alignItems: 'center',
+  justifyContent: 'center',
+}));
+
+const StyledInputBase = styled(InputBase)(({ theme }) => ({
+  color: 'inherit',
+  '& .MuiInputBase-input': {
+    padding: theme.spacing(1, 1, 1, 0),
+    paddingLeft: `calc(1em + ${theme.spacing(4)})`,
+    transition: theme.transitions.create('width'),
+    width: '100%',
+    [theme.breakpoints.up('md')]: {
+      width: '20ch',
+    },
+  },
+}));
+
+const Navbar = ({ onMenuClick, user }) => {
+  const { isAuthenticated, logout } = useAuth();
+  const [anchorEl, setAnchorEl] = useState(null);
+  const navigate = useNavigate();
+
+  const handleProfileMenuOpen = (event) => {
+    setAnchorEl(event.currentTarget);
+  };
+
+  const handleMenuClose = () => {
+    setAnchorEl(null);
+  };
+
+  const handleLogout = () => {
+    handleMenuClose();
+    logout();
+    navigate('/login');
+  };
+
+  const handleProfileClick = () => {
+    handleMenuClose();
+    navigate('/settings');
+  };
+
+  const renderAccountMenu = () => {
+    if (!isAuthenticated()) {
+      return (
+        <Button color="inherit" component={RouterLink} to="/login">
+          Login
+        </Button>
+      );
+    }
+
+    return (
+      <React.Fragment>
+        <Tooltip title="Notifications">
+          <IconButton color="inherit" size="large" aria-label="show notifications">
+            <Badge badgeContent={4} color="error">
+              <NotificationsIcon />
+            </Badge>
+          </IconButton>
+        </Tooltip>
+        
+        <Tooltip title="Account settings">
+          <IconButton
+            onClick={handleProfileMenuOpen}
+            size="small"
+            sx={{ ml: 2 }}
+            aria-controls={anchorEl ? 'account-menu' : undefined}
+            aria-haspopup="true"
+            aria-expanded={Boolean(anchorEl)}
+          >
+            <Avatar 
+              sx={{ width: 32, height: 32, bgcolor: 'primary.main' }}
+              src={user?.avatar}
+            >
+              {user?.name?.charAt(0) || 'U'}
+            </Avatar>
+          </IconButton>
+        </Tooltip>
+
+        <Menu
+          anchorEl={anchorEl}
+          id="account-menu"
+          open={Boolean(anchorEl)}
+          onClose={handleMenuClose}
+          onClick={handleMenuClose}
+          PaperProps={{
+            elevation: 0,
+            sx: {
+              overflow: 'visible',
+              filter: 'drop-shadow(0px 2px 8px rgba(0,0,0,0.32))',
+              mt: 1.5,
+              '& .MuiAvatar-root': {
+                width: 32,
+                height: 32,
+                ml: -0.5,
+                mr: 1,
+              },
+              '&:before': {
+                content: '""',
+                display: 'block',
+                position: 'absolute',
+                top: 0,
+                right: 14,
+                width: 10,
+                height: 10,
+                bgcolor: 'background.paper',
+                transform: 'translateY(-50%) rotate(45deg)',
+                zIndex: 0,
+              },
+            },
+          }}
+          transformOrigin={{ horizontal: 'right', vertical: 'top' }}
+          anchorOrigin={{ horizontal: 'right', vertical: 'bottom' }}
+        >
+          <Box sx={{ px: 2, py: 1 }}>
+            <Typography variant="subtitle2">{user?.name || 'User'}</Typography>
+            <Typography variant="caption" color="text.secondary">
+              {user?.email || 'user@example.com'}
+            </Typography>
+          </Box>
+          
+          <Divider sx={{ my: 1 }} />
+          
+          <MenuItem onClick={() => navigate('/')}>
+            <ListItemIcon>
+              <DashboardIcon fontSize="small" />
+            </ListItemIcon>
+            <ListItemText>Dashboard</ListItemText>
+          </MenuItem>
+          
+          <MenuItem onClick={() => navigate('/products')}>
+            <ListItemIcon>
+              <ProductsIcon fontSize="small" />
+            </ListItemIcon>
+            <ListItemText>Products</ListItemText>
+          </MenuItem>
+          
+          <MenuItem onClick={() => navigate('/alerts')}>
+            <ListItemIcon>
+              <AlertsIcon fontSize="small" />
+            </ListItemIcon>
+            <ListItemText>Alerts</ListItemText>
+          </MenuItem>
+          
+          <Divider />
+          
+          <MenuItem onClick={handleProfileClick}>
+            <ListItemIcon>
+              <SettingsIcon fontSize="small" />
+            </ListItemIcon>
+            <ListItemText>Settings</ListItemText>
+          </MenuItem>
+          
+          <Divider />
+          
+          <MenuItem onClick={handleLogout}>
+            <ListItemIcon>
+              <Logout fontSize="small" />
+            </ListItemIcon>
+            <ListItemText>Logout</ListItemText>
+          </MenuItem>
+        </Menu>
+      </React.Fragment>
+    );
+  };
+
+  return (
+    <AppBar position="fixed" sx={{ zIndex: (theme) => theme.zIndex.drawer + 1 }}>
+      <Toolbar>
+        {isAuthenticated() && (
+          <IconButton
+            color="inherit"
+            aria-label="open drawer"
+            edge="start"
+            onClick={onMenuClick}
+            sx={{ mr: 2 }}
+          >
+            <MenuIcon />
+          </IconButton>
+        )}
+        
+        <Typography 
+          variant="h6" 
+          noWrap 
+          component="div" 
+          sx={{ 
+            display: { xs: 'none', sm: 'block' }, 
+            flexGrow: 1 
+          }}
+        >
+          PriceWatcher
+        </Typography>
+        
+        <Box sx={{ display: 'flex', alignItems: 'center' }}>
+          {renderAccountMenu()}
+        </Box>
+      </Toolbar>
+    </AppBar>
+  );
+};
+
+export default React.memo(Navbar);

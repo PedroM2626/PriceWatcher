@@ -18,12 +18,16 @@ type Config struct {
 
 // DatabaseConfig holds database configuration
 type DatabaseConfig struct {
-	Host     string `yaml:"host"`
-	Port     int    `yaml:"port"`
-	User     string `yaml:"user"`
-	Password string `yaml:"password"`
-	DBName   string `yaml:"dbname"`
-	SSLMode  string `yaml:"sslmode"`
+	Driver string `yaml:"driver"` // sqlite3, postgres, etc.
+	DSN    string `yaml:"dsn"`    // Data Source Name (e.g., file path for SQLite, connection string for PostgreSQL)
+	
+	// PostgreSQL specific fields (optional, can be used to build DSN)
+	Host     string `yaml:"host,omitempty"`
+	Port     int    `yaml:"port,omitempty"`
+	User     string `yaml:"user,omitempty"`
+	Password string `yaml:"password,omitempty"`
+	DBName   string `yaml:"dbname,omitempty"`
+	SSLMode  string `yaml:"sslmode,omitempty"`
 }
 
 // ScraperConfig holds scraper configuration
