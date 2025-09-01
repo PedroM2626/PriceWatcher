@@ -12,6 +12,11 @@ import (
 // NewStorage creates a new storage instance based on the provided configuration
 func NewStorage(cfg config.DatabaseConfig) (Storage, error) {
 	switch cfg.Driver {
+	case "postgres":
+		if cfg.DSN == "" {
+			return nil, fmt.Errorf("DSN is required for Postgres (e.g., Supabase DATABASE_URL)")
+		}
+		return NewPostgresStorage(cfg.DSN)
 	case "sqlite3", "sqlite":
 		if cfg.DSN == "" {
 			return nil, fmt.Errorf("DSN is required for SQLite")
