@@ -21,7 +21,7 @@ PriceWatcher is a Go application that monitors product prices across various e-c
 
 1. Clone the repository:
    ```bash
-   git clone https://github.com/yourusername/PriceWatcher.git
+   git clone https://github.com/PedroM2626/PriceWatcher.git
    cd PriceWatcher
    ```
 
